@@ -3,10 +3,11 @@ package com.ygaps.androidlogin.network;
 import com.ygaps.androidlogin.model.LoginRequest;
 import com.ygaps.androidlogin.model.LoginResponse;
 
-import retrofit.Callback;
-import retrofit.client.Response;
-import retrofit.http.Body;
-import retrofit.http.POST;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
 
 /**
  * Created by tpl on 12/13/16.
@@ -14,8 +15,8 @@ import retrofit.http.POST;
 
 public interface UserService {
     @POST("/login.php")
-    void login(@Body LoginRequest request, Callback<LoginResponse> callback);
+    Call<LoginResponse> login(@Body LoginRequest request);
 
     @POST("/logout.php")
-    void logout(Callback<Response> callback);
+    Call<Void> logout();
 }

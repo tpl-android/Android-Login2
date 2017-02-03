@@ -4,8 +4,14 @@ import android.text.TextUtils;
 
 import com.ygaps.androidlogin.manager.Constants;
 
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by tpl on 12/13/16.
@@ -14,7 +20,7 @@ import retrofit.RestAdapter;
 public class MyAPIClient {
     private static MyAPIClient instance;
 
-    private RestAdapter adapter;
+    private Retrofit adapter;
 
     public String getAccessToken() {
         return accessToken;
@@ -27,20 +33,30 @@ public class MyAPIClient {
     private String accessToken;
 
     private MyAPIClient() {
-        RequestInterceptor requestInterceptor = new RequestInterceptor() {
-            @Override
-            public void intercept(RequestFacade request) {
-                if (!TextUtils.isEmpty(accessToken))
-                    request.addHeader("Authorization", "Bearer " + accessToken);
-            }
-        };
-        adapter = new RestAdapter.Builder()
-                .setEndpoint(Constants.APIEndpoint)
-                .setRequestInterceptor(requestInterceptor)
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        if (!TextUtils.isEmpty(accessToken)) {
+                            request = request.newBuilder()
+                                    .addHeader("Authorization", "Bearer " + accessToken)
+                                    .build();
+                        }
+                        Response response = chain.proceed(request);
+                        return response;
+                    }
+                })
+                .build();
+
+        adapter = new Retrofit.Builder()
+                .baseUrl(Constants.APIEndpoint)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 
-    public RestAdapter getAdapter() {
+    public Retrofit getAdapter() {
         return adapter;
     }
 

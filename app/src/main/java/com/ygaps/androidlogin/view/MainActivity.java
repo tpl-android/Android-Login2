@@ -1,6 +1,7 @@
 package com.ygaps.androidlogin.view;
 
 import android.app.ProgressDialog;
+import android.app.VoiceInteractor;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -14,9 +15,9 @@ import com.ygaps.androidlogin.R;
 import com.ygaps.androidlogin.network.MyAPIClient;
 import com.ygaps.androidlogin.network.UserService;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,9 +39,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mProgressDialog.show();
-                userService.logout(new Callback<Response>() {
+                Call<Void> call = userService.logout();
+                call.enqueue(new Callback<Void>() {
                     @Override
-                    public void success(Response response, Response response2) {
+                    public void onResponse(Call<Void> call, Response<Void> response) {
                         // Clear token
                         //client.setAccessToken(null);
                         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this.getApplicationContext());
@@ -58,11 +60,10 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void failure(RetrofitError error) {
+                    public void onFailure(Call<Void> call, Throwable t) {
                         mProgressDialog.hide();
                     }
                 });
-
             }
         });
     }
