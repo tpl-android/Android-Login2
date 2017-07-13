@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ygaps.androidlogin.R;
+import com.ygaps.androidlogin.manager.MyApplication;
 import com.ygaps.androidlogin.network.MyAPIClient;
 import com.ygaps.androidlogin.network.UserService;
 
@@ -33,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
         mProgressDialog.setCancelable(false);
 
         userService = MyAPIClient.getInstance().getAdapter().create(UserService.class);
+
+        MyApplication app = (MyApplication)getApplication();
+        TextView tv = (TextView) findViewById(R.id.textView);
+        tv.setText(getString(R.string.hello) + " " + app.getTokenInfo().getUserName());
 
         Button logout = (Button)findViewById(R.id.b_Logout);
         logout.setOnClickListener(new View.OnClickListener() {

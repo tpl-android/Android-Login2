@@ -32,4 +32,19 @@ public class MyApplication extends Application{
         editor.commit();
     }
 
+    public void loadTokenInfo() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String tokenStr = sharedPref.getString(getString(R.string.saved_token), null);
+        if(TextUtils.isEmpty(tokenStr)) {
+
+        }else{
+            tokenInfo = new Gson().fromJson(tokenStr, new TypeToken<TokenInfo>(){}.getType());
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        loadTokenInfo();
+    }
 }
