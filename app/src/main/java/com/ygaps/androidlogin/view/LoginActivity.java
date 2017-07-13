@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ygaps.androidlogin.R;
+import com.ygaps.androidlogin.manager.MyApplication;
 import com.ygaps.androidlogin.model.LoginRequest;
 import com.ygaps.androidlogin.model.LoginResponse;
 import com.ygaps.androidlogin.network.MyAPIClient;
@@ -162,6 +163,9 @@ public class LoginActivity extends AppCompatActivity {
                     long time = (new Date()).getTime()/1000;
                     editor.putString(getString(R.string.saved_access_token), response.body().getData().getToken());
                     editor.putLong(getString(R.string.saved_access_token_time), time);
+                    MyApplication app = (MyApplication) LoginActivity.this.getApplication();
+                    app.setTokenInfo(response.body().getData());
+
                     editor.commit();
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
