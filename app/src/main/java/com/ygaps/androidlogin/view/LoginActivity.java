@@ -156,17 +156,16 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 // Save login info
                     MyAPIClient.getInstance().setAccessToken(response.body().getData().getToken());
-                    // Persist access token
+                    long time = (new Date()).getTime()/1000;
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString(getString(R.string.saved_access_token), response.body().getData().getToken());
-                    long time = (new Date()).getTime()/1000;
                     editor.putString(getString(R.string.saved_access_token), response.body().getData().getToken());
                     editor.putLong(getString(R.string.saved_access_token_time), time);
+                    editor.commit();
+
                     MyApplication app = (MyApplication) LoginActivity.this.getApplication();
                     app.setTokenInfo(response.body().getData());
-
-                    editor.commit();
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -179,23 +178,6 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<LoginResponse> call, Throwable t) {
                     Log.d(TAG, t.getMessage());
-
-//                    Log.d(TAG, t.getMessage()+ " "+ t.getUrl());
-//                    switch (error.getKind()) {
-//                        case NETWORK:
-//                        case UNEXPECTED:
-//                            Toast.makeText(LoginActivity.this, R.string.error_check_network_connection, Toast.LENGTH_LONG).show();
-//                            break;
-//                        case HTTP:
-//                            if (error.getResponse().getStatus() == 401 || 400 == error.getResponse().getStatus()) {
-//                                mEmailView.setError(getString(R.string.error_incorrect_password));
-//                                mPasswordView.setError(getString(R.string.error_incorrect_password));
-//                                mPasswordView.requestFocus();
-//                                break;
-//                            }
-//                        default:
-//                            Toast.makeText(LoginActivity.this, R.string.error_backend_error, Toast.LENGTH_LONG).show();
-//                    }
                     mProgressDialog.hide();
                 }
             });
